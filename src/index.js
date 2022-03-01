@@ -1,9 +1,8 @@
-import { complileToFunction } from "./compiler/index.js";
 import { initGlobalAPI } from "./global-api/index.js";
 import { initMixin } from "./init";
 import { lifecycleMixin } from "./lifecycle";
 import { renderMixin } from "./render";
-import {createElm, patch} from "./vdom/patch"
+import { stateMixin } from "./state.js";
 // 所有功能通过原型的方式添加
 function Vue(option){
     this._init(option);    // 实现vue的初始化
@@ -12,6 +11,7 @@ function Vue(option){
 initMixin(Vue);         // 扩展初始化方法
 lifecycleMixin(Vue);    // 扩展_update方法
 renderMixin(Vue);       // 扩展_render方法
+stateMixin(Vue);        // 扩展$watch方法
 
 initGlobalAPI(Vue);
 

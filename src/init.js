@@ -18,8 +18,7 @@ export function initMixin(Vue){
         callHook(vm, 'created');
 
         if(vm.$options.el){
-            // 挂载数据到页面
-            console.log('页面要挂载')
+            // 挂载组件到页面
 
             /**
              * template -> ast语法书（用来描述代码本身形成的结构，可以描述js\html\css）->描述成一个树结构->将代码重组成js语法
@@ -55,6 +54,8 @@ export function initMixin(Vue){
                 options.render = render;          
             }
         }
+        // 到了最后肯定存在render函数
+        
         mountComponent(vm, el);
     }
 }

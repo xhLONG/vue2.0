@@ -27,6 +27,7 @@ export function patch(oldVnode, vnode){     // 后续做两个虚拟节点的比
         }
         if(!oldVnode.tag){
             if(oldVnode.text !== vnode.text){
+                vnode.el = oldVnode.el;
                 return oldVnode.el.textContent = vnode.text;
             }
         }

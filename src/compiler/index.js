@@ -8,11 +8,11 @@ import { generate } from "./generate";
  */
 export function complileToFunction(template){
     console.log('编译模版', template)
-    // 1、将模版编译为ast语法树
+    // 1、解析html模版 生成ast语法树
     let ast = parseHtml(template);
     console.log('ast语法树', ast)
 
-    // 2、代码生成
+    // 2、根据ast语法树生成render函数的代码
     let code = generate(ast);
     console.log('生成代码', code)
 

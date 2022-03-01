@@ -31,7 +31,7 @@ function parseHtml(html){
             // 根节点为空，说明当前是根节点
             root = element;
         }else{
-            const parent = stack[stack.length - 1]
+            const parent = stack[stack.length - 1];
             element.parent = parent;
             parent.children.push(element);
         }

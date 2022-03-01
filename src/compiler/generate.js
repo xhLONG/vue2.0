@@ -61,7 +61,7 @@ function gen(el){
  * 
  * @param {*} ast 
  * @returns code
- * 将ast树生成代码
+ * 根据ast树生成代码
  */
 export function generate(ast){
     let code = `_c('${ast.tag}', ${

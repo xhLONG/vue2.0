@@ -9,7 +9,7 @@ export function createElement(vm, tag, data={}, ...children){
         // 如果是来自Vue实例对象内的component属性，则Ctor是对象
         // 如果是来自Vue.component()声明的全局组件，则Ctor是组件构造器函数
         const Ctor = vm.$options.components[tag];
-        console.log('内部组件', Ctor)
+        console.log('自定义组件', Ctor)
         return createComponent(vm, tag, data, children, data.key, Ctor)
     }
 }

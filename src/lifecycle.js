@@ -29,12 +29,21 @@ export function callHook(vm, hook){ // 发布模式
 export function mountComponent(vm, el){
     // 实现页面的挂载流程
     vm.$el = el;
+    if(!vm._isMounted && !vm._isDestroyed){
+        callHook(vm, 'beforeMount');
+    }
     const updateComponent = () => {
-        // 调用render函数，获取虚拟节点，生成真实dom
+        // 调用render函数，获取虚拟节点，update函数将虚拟节点生成真实dom
         vm._update(vm._render())
     };
     // 默认vue是通过watcher来进行渲染 = 渲染watcher（每个组件都有一个渲染watcher）
     // 如果数据发生变化，也调用这个函数
     // updateComponent();
     new Watcher(vm, updateComponent, () => {}, true);
+
+    // 如果没有_vnode说明是第一次初始化渲染完毕
+    if(!vm._vnode){
+        vm._isMounted = true;
+        callHook(vm, 'mounted');
+    }
 }
