@@ -19,12 +19,15 @@ class Dep{
     }
 }
 Dep.target = null;
+const targetStack = [];     // 栈结构用来存储watcher
 
 export function pushTarget(watcher){
-    Dep.target = watcher
+    targetStack.push(watcher);
+    Dep.target = watcher;   // Dep.target指向当前target       
 }
 export function popTarget(){
-    Dep.target = null
+    targetStack.pop();      // 当前watcher出栈 拿到上一个watcher
+    Dep.target = targetStack[targetStack.length - 1];
 }
 
 export default Dep;

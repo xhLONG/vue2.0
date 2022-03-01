@@ -94,7 +94,7 @@ export function observe(data){
  * 观察者模式、依赖收集、发布订阅。
  * 使用object.definedProperty实现了数据劫持，观察每一个属性，给每个一个属性都添加了一个dep实例；
  * 当获取属性时就会触发getter方法，收集依赖，此时会将watcher实例（每个组件对应一个watcher实例）和dep实例联系起来，
- * watcher也是作为一个订阅者加入到dep的订阅者列表中，一个watcher会对应多个dep，不确定一个dep会不会对应多个watcher；
+ * watcher也是作为一个订阅者加入到dep的订阅者列表中，一个watcher会对应多个dep，一个dep也可能会对应多个watcher(渲染watcher、计算watcher)；
  * 当修改某个属性值时就会触发setter方法，dep发布通知，订阅者列表中的订阅者就会被执行。
  * 
  * 所以说vue也是组件级更新，属性值发生改变，只会更新相应的组件

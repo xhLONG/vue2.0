@@ -1,6 +1,8 @@
 import utils from "./utils";
 import { observe } from "./observe/index";
 import Watcher from "./observe/watcher";
+import { watch } from "rollup";
+import Dep from "./observe/dep";
 
 export function initState(vm){
     const opts = vm.$options;
@@ -9,6 +11,9 @@ export function initState(vm){
 
     if(opts.data){
         initData(vm);
+    }
+    if(opts.computed){
+        initComputed(vm);
     }
     if(opts.watch){
         initWatch(vm);
@@ -44,7 +49,55 @@ function proxy(obj, key, source){
     })
 }
 
-// 初始化watch
+// 初始化计算属性
+function initComputed(vm){
+    const computed = vm.$options.computed;
+    const watchers = (vm._computedWatchers = {});   // 存放计算watcher
+
+    for(let k in computed){
+        const userDef = computed[k];    // 获取用户定义的计算属性
+        const getter = typeof userDef === 'function' ? userDef : userDef.get;
+        // 创建计算watcher lazy设置为true
+        watchers[k] = new Watcher(vm, getter, () => {}, {lazy: true});
+        defineComputed(vm, k, userDef);
+    }
+}
+// 定义普通对象用来劫持计算属性
+const sharedPropertyDefinition = {
+    enumerable: true,
+    configurable: true,
+    get: () => {},
+    set: () => {},
+};
+// 重新定义计算属性 对get和set劫持
+function defineComputed(target, key, userDef){
+    if(typeof userDef === 'function'){
+        sharedPropertyDefinition.get = createComputedGetter(key);
+    }else{
+        sharedPropertyDefinition.get = createComputedGetter(key);
+        sharedPropertyDefinition.set = userDef.set;
+    }
+    // 利用object.defineProperty来对计算属性的get和set进行劫持
+    Object.defineProperty(target, key, sharedPropertyDefinition);
+}
+// 重写计算属性的get方法 来判断是否需要进行重新计算
+function createComputedGetter(key){
+    return function(){
+        const watcher = this._computedWatchers[key];    // 获取对应的计算属性watcher
+        if(watcher){
+            if(watcher.dirty){
+                watcher.evaluate(); // 如果是脏的 则重新计算取值
+            }
+            if(Dep.target){
+                // 如果Dep还存在target 这个时候一般为渲染watcher 计算属性依赖的数据也需要收集
+                watcher.depend();
+            }
+            return watcher.value;
+        }
+    }
+}
+
+// 初始化侦听属性
 function initWatch(vm){
     let watch = vm.$options.watch;
     for(let k in watch){
