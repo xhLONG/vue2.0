@@ -99,3 +99,42 @@ export function observe(data){
  * 
  * 所以说vue也是组件级更新，属性值发生改变，只会更新相应的组件
  */
+
+
+// Vue.set方法 让某属性具有响应式
+export function set (target, key, val) {
+    if (Array.isArray(target)) {
+      target.length = Math.max(target.length, key)
+      target.splice(key, 1, val)
+      return val
+    }
+    if (key in target && !(key in Object.prototype)) {
+      target[key] = val
+      return val
+    }
+    const ob = target.__ob__
+    if (!ob) {
+      target[key] = val
+      return val
+    }
+    defineReactive(ob.value, key, val)
+    ob.dep.notify()
+    return val
+}
+
+// Vue.delete 删除某属性
+export function del (target, key) {
+    if (Array.isArray(target)) {
+      target.splice(key, 1)
+      return
+    }
+    const ob = target.__ob__
+    if (!target.hasOwnProperty(key)) {
+      return
+    }
+    delete target[key]
+    if (!ob) {
+      return
+    }
+    ob.dep.notify()
+  }
